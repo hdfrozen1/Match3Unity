@@ -135,10 +135,6 @@ public class TrayManager : MonoBehaviour
 
     private void CheckMatches()
     {
-        if (m_gamemanager.CurrentMode == GameManager.eLevelMode.TIMER)
-        {
-            return;
-        }
         bool hasMatch = false;
         for (int i = 0; i <= m_itemsInTray.Count - 3; i++)
         {
@@ -155,7 +151,7 @@ public class TrayManager : MonoBehaviour
             }
         }
         // Nếu khay đã đầy mà không có Match nào vừa diễn ra -> THUA
-        if (!hasMatch && m_itemsInTray.Count >= m_settings.TrayCapacity)
+        if (!hasMatch && m_itemsInTray.Count >= m_settings.TrayCapacity && m_gamemanager.CurrentMode != GameManager.eLevelMode.TIMER)
         {
             Debug.Log("Game Over! Khay đã đầy.");
             // Bạn có thể gọi một sự kiện GameOver ở đây
