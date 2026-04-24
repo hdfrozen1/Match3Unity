@@ -19,5 +19,5 @@ MonoBehaviour:
   TraySlotSpacing: 1.1
   TrayPosition: {x: 0, y: -5, z: 0}
   LevelMoves: 16
-  LevelTime: 5
+  LevelTime: 60
   TimeForHint: 5
