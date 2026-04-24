@@ -47,6 +47,29 @@ public class BoardController : MonoBehaviour
 
         Fill();
     }
+    public void StartGame(GameManager gameManager, GameSettings gameSettings, TrayManager trayManager,bool autowin)
+    {
+        m_gameManager = gameManager;
+
+        m_gameSettings = gameSettings;
+        m_trayManager = trayManager; // Lưu tham chiếu tray
+
+        m_gameManager.StateChangedAction += OnGameStateChange;
+
+        m_cam = Camera.main;
+
+        m_board = new Board(this.transform, gameSettings);
+
+        Fill();
+        if (autowin)
+        {
+            TriggerAutoWin();
+        }
+        else
+        {
+            TriggerAutoLose();
+        }
+    }
 
     private void Fill()
     {
@@ -369,4 +392,78 @@ public class BoardController : MonoBehaviour
 
         m_potentialMatch.Clear();
     }
+
+    #region AUTO PLAY MECHANISM (DEBUG)
+
+    public void TriggerAutoWin()
+    {
+        StartCoroutine(AutoWinCoroutine());
+    }
+
+    public void TriggerAutoLose()
+    {
+        StartCoroutine(AutoLoseCoroutine());
+    }
+
+    // CƠ CHẾ TỰ THẮNG: Gom các Item cùng loại và click lần lượt 3 cái một
+    private IEnumerator AutoWinCoroutine()
+    {
+        while (!m_board.IsBoardEmpty())
+        {
+            // 1. Lấy tất cả các ô đang có Item
+            List<Cell> allCells = m_board.GetAllOccupiedCells();
+            if (allCells.Count == 0) break;
+
+            // 2. Nhóm chúng theo loại (Type)
+            // Lưu ý: Ép kiểu sang NormalItem để lấy ItemType
+            var groupedItems = allCells
+                .Where(c => c.Item is NormalItem)
+                .GroupBy(c => ((NormalItem)c.Item).ItemType)
+                .ToList();
+
+            foreach (var group in groupedItems)
+            {
+                // Lấy danh sách các ô trong nhóm này
+                List<Cell> cellsInGroup = group.ToList();
+
+                // Click từng cái một trong nhóm này (thường là bội số của 3 như ta đã thiết lập ở hàm Fill)
+                foreach (Cell cell in cellsInGroup)
+                {
+                    // Đợi nếu Controller hoặc Tray đang bận animation
+                    yield return new WaitUntil(() => !IsBusy && !m_trayManager.IsBusy);
+
+                    if (m_gameOver) yield break;
+
+                    // Giả lập click
+                    HandleClick(cell);
+                }
+
+                // Sau khi click hết 1 loại, đợi 1 chút để Tray clear bộ 3 đó rồi mới sang loại tiếp theo
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+    }
+
+    // CƠ CHẾ TỰ THUA: Click bất chấp cho đến khi đầy khay
+    private IEnumerator AutoLoseCoroutine()
+    {
+        List<Cell> allCells = m_board.GetAllOccupiedCells();
+
+        foreach (Cell cell in allCells)
+        {
+            // Đợi cho đến khi sẵn sàng click cái tiếp theo
+            yield return new WaitUntil(() => !IsBusy && !m_trayManager.IsBusy);
+
+            if (m_gameOver) yield break;
+
+            // Kiểm tra nếu khay sắp đầy thì click cái "phá đám" (khác loại với các cái đang có trong khay)
+            // Nhưng đơn giản nhất là click liên tục cho đến khi TrayManager báo GameOver
+            HandleClick(cell);
+
+            // Nếu khay đã đầy và Game Over thì dừng
+            if (m_gameOver) break;
+        }
+    }
+
+    #endregion
 }

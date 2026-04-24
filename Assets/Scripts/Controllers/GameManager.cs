@@ -83,7 +83,28 @@ public class GameManager : MonoBehaviour
             DOTween.PlayAll();
         }
     }
+    public void LoadLevelAuto(eLevelMode mode,bool win)
+    {
+        m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
 
+        // Tạo TrayManager đồng bộ
+        m_trayManager = new GameObject("TrayManager").AddComponent<TrayManager>();
+
+        // Khởi tạo cả hai bằng GameSettings
+        m_trayManager.Setup(this, m_gameSettings);
+        m_boardController.StartGame(this, m_gameSettings, m_trayManager,win); // Thêm tham chiếu tray vào đây
+        // m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
+        // m_boardController.StartGame(this, m_gameSettings);
+
+        CurrentMode = mode;
+        if (mode == eLevelMode.MOVES)
+        {
+            m_levelCondition = this.gameObject.AddComponent<LevelMoves>();
+            m_levelCondition.Setup(m_gameSettings.LevelMoves, m_uiMenu.GetLevelConditionView(), m_boardController);
+        }
+
+        State = eStateGame.GAME_STARTED;
+    }
     public void LoadLevel(eLevelMode mode)
     {
         m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
@@ -92,7 +113,7 @@ public class GameManager : MonoBehaviour
         m_trayManager = new GameObject("TrayManager").AddComponent<TrayManager>();
 
         // Khởi tạo cả hai bằng GameSettings
-        m_trayManager.Setup(this,m_gameSettings);
+        m_trayManager.Setup(this, m_gameSettings);
         m_boardController.StartGame(this, m_gameSettings, m_trayManager); // Thêm tham chiếu tray vào đây
         // m_boardController = new GameObject("BoardController").AddComponent<BoardController>();
         // m_boardController.StartGame(this, m_gameSettings);

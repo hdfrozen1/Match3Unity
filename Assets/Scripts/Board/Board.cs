@@ -762,4 +762,21 @@ public class Board
             }
         }
     }
+
+    // dat them
+    public List<Cell> GetAllOccupiedCells()
+    {
+        List<Cell> occupiedCells = new List<Cell>();
+        for (int x = 0; x < boardSizeX; x++)
+        {
+            for (int y = 0; y < boardSizeY; y++)
+            {
+                if (!m_cells[x, y].IsEmpty)
+                {
+                    occupiedCells.Add(m_cells[x, y]);
+                }
+            }
+        }
+        return occupiedCells;
+    }
 }

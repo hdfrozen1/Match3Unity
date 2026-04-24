@@ -9,6 +9,8 @@ public class UIPanelMain : MonoBehaviour, IMenu
     [SerializeField] private Button btnTimer;
 
     [SerializeField] private Button btnMoves;
+    [SerializeField] private Button btnAutoWin;
+    [SerializeField] private Button btnAutoLose;
 
     private UIMainManager m_mngr;
 
@@ -16,12 +18,26 @@ public class UIPanelMain : MonoBehaviour, IMenu
     {
         btnMoves.onClick.AddListener(OnClickMoves);
         btnTimer.onClick.AddListener(OnClickTimer);
+        btnAutoWin.onClick.AddListener(OnClickAutoWin);
+        btnAutoLose.onClick.AddListener(OnClickAutoLose);
+    }
+
+    private void OnClickAutoLose()
+    {
+        m_mngr.AutoLose();
+    }
+
+    private void OnClickAutoWin()
+    {
+        m_mngr.AutoWin();
     }
 
     private void OnDestroy()
     {
         if (btnMoves) btnMoves.onClick.RemoveAllListeners();
         if (btnTimer) btnTimer.onClick.RemoveAllListeners();
+        if (btnAutoLose) btnAutoLose.onClick.RemoveAllListeners();
+        if (btnAutoWin) btnAutoWin.onClick.RemoveAllListeners();
     }
 
     public void Setup(UIMainManager mngr)

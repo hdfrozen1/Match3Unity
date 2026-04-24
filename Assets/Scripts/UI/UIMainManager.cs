@@ -121,4 +121,13 @@ public class UIMainManager : MonoBehaviour
     {
         m_gameManager.SetState(GameManager.eStateGame.GAME_STARTED);
     }
+
+    internal void AutoWin()
+    {
+        m_gameManager.LoadLevelAuto(GameManager.eLevelMode.MOVES,true);
+    }
+    internal void AutoLose()
+    {
+        m_gameManager.LoadLevelAuto(GameManager.eLevelMode.MOVES,false);
+    }
 }
