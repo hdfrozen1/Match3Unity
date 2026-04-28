@@ -1,3 +1,6 @@
+##GamePlay
+https://youtu.be/IVhq7tb-A04?feature=shared
+
 # Triple Match Game - Project Documentation & Changelog
 
 Dự án game Triple Match (Match-3 kiểu mới) phát triển trên Unity. Người chơi chọn các vật phẩm từ bàn chơi (Board) đưa vào khay (Tray). Khi đủ 3 vật phẩm cùng loại trong khay, chúng sẽ biến mất.
